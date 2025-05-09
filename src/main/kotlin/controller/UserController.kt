@@ -1,6 +1,5 @@
 package com.example.controller
 
-import com.example.manager.IngredientManager
 import com.example.manager.UserManager
 import com.example.model.*
 

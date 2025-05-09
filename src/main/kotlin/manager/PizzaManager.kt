@@ -8,7 +8,7 @@ import com.example.model.PizzaSideFilterProps
 import com.example.model.PizzaSideSerializable
 import java.util.UUID
 
-class PizzaManager : BaseManager<Pizza, PizzaProps, PizzaSideFilterProps> {
+class PizzaManager : BaseManager<Pizza, PizzaProps, PizzaSideFilterProps, UUID> {
 
     private val userPizzas = mutableMapOf<UUID, MutableList<Pizza>>()
 

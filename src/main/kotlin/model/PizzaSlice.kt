@@ -1,30 +1,26 @@
 package com.example.model
 
-import com.example.utils.UUIDSerializer
-import com.example.utils.Validatable
 import kotlinx.serialization.Serializable
-import java.util.UUID
 
 @Serializable
-data class PizzaSlice(
-    @Serializable(with = UUIDSerializer::class) val id: UUID = UUID.randomUUID(),
-    var name: String,
-    var ingredients: List<Ingredient>,
+data class PizzaSliceProps(
+    val name: String,
+    val base: PizzaBase,
+    val side: PizzaSideSerializable,
+    val ingredients: MutableList<Ingredient> = mutableListOf(),
 ) {
-    constructor(props: PizzaSliceProps) : this(
-        UUID.randomUUID(),
-        props.name.orEmpty(),
-        props.ingredients ?: emptyList()
+    constructor(owner: UserResponse, props: PizzaSliceRequest) : this(
+        name = props.name ?: "custom",
+        base = props.base,
+        side = props.side ?: PizzaSideSerializable(PizzaSide(owner.id)),
+        ingredients = props.ingredients,
     )
 }
 
 @Serializable
-data class PizzaSliceProps(
+data class PizzaSliceRequest(
     val name: String? = null,
-    val ingredients: List<Ingredient>? = null,
-) : Validatable {
-    override fun validate() {
-        require(!name.isNullOrBlank()) { "Нужно указать название!" }
-        require(!ingredients.isNullOrEmpty()) { "Нужно указать ингредиенты!" }
-    }
-}
+    val base: PizzaBase,
+    val side: PizzaSideSerializable? = null,
+    val ingredients: MutableList<Ingredient> = mutableListOf(),
+)

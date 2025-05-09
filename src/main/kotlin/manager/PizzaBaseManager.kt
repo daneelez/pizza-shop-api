@@ -8,7 +8,7 @@ import com.example.utils.isClassicBase
 import java.util.UUID
 import kotlin.math.roundToInt
 
-class PizzaBaseManager() : BaseManager<PizzaBase, PizzaBaseProps, PriceFilterProps> {
+class PizzaBaseManager() : BaseManager<PizzaBase, PizzaBaseProps, PriceFilterProps, UUID> {
 
     private val userBases = mutableMapOf<UUID, MutableList<PizzaBase>>()
     private var defaultPrice: Double? = null;

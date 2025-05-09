@@ -7,7 +7,7 @@ import com.example.model.PriceFilterProps
 import java.util.UUID
 import kotlin.math.roundToInt
 
-class IngredientManager() : BaseManager<Ingredient, IngredientProps, PriceFilterProps> {
+class IngredientManager() : BaseManager<Ingredient, IngredientProps, PriceFilterProps, UUID> {
 
     private val userIngredients = mutableMapOf<UUID, MutableList<Ingredient>>()
 

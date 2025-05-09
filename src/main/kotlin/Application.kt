@@ -1,6 +1,7 @@
 package com.example
 
 import com.example.manager.IngredientManager
+import com.example.manager.OrderManager
 import com.example.manager.PizzaBaseManager
 import com.example.manager.PizzaManager
 import com.example.manager.PizzaSideManager
@@ -18,9 +19,10 @@ fun main() {
     val pizzaBaseManager = PizzaBaseManager()
     val pizzaSideManager = PizzaSideManager()
     val pizzaManager = PizzaManager()
+    val orderManager = OrderManager()
 
     embeddedServer(Netty, port = 8080, host = "0.0.0.0") {
-        module(userManager, ingredientManager, pizzaBaseManager, pizzaSideManager, pizzaManager)
+        module(userManager, ingredientManager, pizzaBaseManager, pizzaSideManager, pizzaManager, orderManager)
     }.start(wait = true)
 }
 
@@ -30,6 +32,7 @@ fun Application.module(
     pizzaBaseManager: PizzaBaseManager,
     pizzaSideManager: PizzaSideManager,
     pizzaManager: PizzaManager,
+    orderManager: OrderManager,
 ) {
     install(CORS) {
         anyHost()
@@ -42,5 +45,5 @@ fun Application.module(
     }
 
     configureSerialization()
-    configureRouting(userManager, ingredientManager, pizzaBaseManager, pizzaSideManager, pizzaManager)
+    configureRouting(userManager, ingredientManager, pizzaBaseManager, pizzaSideManager, pizzaManager, orderManager)
 }

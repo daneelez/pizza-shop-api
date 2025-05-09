@@ -6,7 +6,7 @@ import com.example.model.PizzaSideProps
 
 import java.util.UUID
 
-class PizzaSideManager() : BaseManager<PizzaSide, PizzaSideProps, PizzaSideFilterProps> {
+class PizzaSideManager() : BaseManager<PizzaSide, PizzaSideProps, PizzaSideFilterProps, UUID> {
 
     private val userSides = mutableMapOf<UUID, MutableList<PizzaSide>>()
 
