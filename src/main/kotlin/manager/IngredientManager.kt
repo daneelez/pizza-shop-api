@@ -3,6 +3,7 @@ package com.example.manager
 import com.example.model.Ingredient
 import com.example.model.IngredientProps
 import com.example.model.PriceFilterProps
+import com.example.utils.priceFilter
 
 import java.util.UUID
 import kotlin.math.roundToInt
@@ -37,15 +38,9 @@ class IngredientManager() : BaseManager<Ingredient, IngredientProps, PriceFilter
         val list = userIngredients[userId]?.toList() ?: emptyList()
 
         return if (filterData != null) {
-            list.filter {
-                it.price >= filterData.minPrice && it.price <= filterData.maxPrice
-            }
+            list.priceFilter(filterData.minPrice, filterData.maxPrice)
         } else {
             list
         }
-    }
-
-    fun findById(userId: UUID, id: UUID): Ingredient? {
-        return userIngredients[userId]?.find { it.id == id }
     }
 }

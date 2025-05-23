@@ -11,10 +11,10 @@ data class Pizza(
     @Serializable(with = UUIDSerializer::class) val owner: UUID,
     var name: String,
     var base: PizzaBase,
-    var ingredients: MutableList<Ingredient> = mutableListOf(),
+    override var ingredients: MutableList<Ingredient> = mutableListOf(),
     var side: PizzaSideSerializable,
-) {
-    val price: Double
+) : PricedConst, Ingrediented {
+    override val price: Double
         get() {
             val ingredientsSum = ingredients.sumOf { it.price }
 

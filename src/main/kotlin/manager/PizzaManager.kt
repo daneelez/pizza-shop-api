@@ -6,6 +6,7 @@ import com.example.model.PizzaProps
 import com.example.model.PizzaSide
 import com.example.model.PizzaSideFilterProps
 import com.example.model.PizzaSideSerializable
+import com.example.utils.priceAndIngredientFilter
 import java.util.UUID
 
 class PizzaManager : BaseManager<Pizza, PizzaProps, PizzaSideFilterProps, UUID> {
@@ -55,10 +56,11 @@ class PizzaManager : BaseManager<Pizza, PizzaProps, PizzaSideFilterProps, UUID> 
         val list = userPizzas[userId]?.toList() ?: emptyList()
 
         return if (filterData != null) {
-            list.filter {
-                it.price >= filterData.minPrice && it.price <= filterData.maxPrice
-                        && it.ingredients.containsAll(filterData.ingredients)
-            }
+            list.priceAndIngredientFilter(
+                filterData.minPrice,
+                filterData.maxPrice,
+                filterData.ingredients
+            )
         } else {
             list
         }

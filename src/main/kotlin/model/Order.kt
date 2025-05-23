@@ -15,18 +15,34 @@ data class Order(
     val owners: MutableList<UserResponse> = mutableListOf(),
     val pizzas: MutableList<PizzaOrderProps> = mutableListOf(),
     var description: String = "",
-    @Serializable(with = InstantSerializer::class) var date: Instant = Instant.now(),
-) {
-    val price: Double
-        get() {
-            val basicPrice = pizzas.sumOf { it.price }.toBigDecimal()
-            val size = owners.size.toBigDecimal()
-            val dividedSum = basicPrice / size
+    @Serializable(with = InstantSerializer::class) override var date: Instant = Instant.now(),
+) : PricedConst, Dated {
+    override val price: Double
+        get() = calculatePerUserPrice().values.sum()
 
-            val diff = basicPrice - (dividedSum * size)
+    fun calculatePerUserPrice(): Map<UserResponse, Double> {
+        val userToAmount = mutableMapOf<UserResponse, Double>()
 
-            return (dividedSum + diff).setScale(2, RoundingMode.HALF_UP).toDouble()
+        for (pizza in pizzas) {
+            val owners = pizza.owners
+            val fullPrice = pizza.price
+            val perPerson = (fullPrice / owners.size).toBigDecimal().setScale(2, RoundingMode.DOWN)
+            val total = perPerson * owners.size.toBigDecimal()
+            val diff = (fullPrice.toBigDecimal() - total).setScale(2, RoundingMode.HALF_UP)
+
+            for ((index, owner) in owners.withIndex()) {
+                val finalAmount = if (index == 0) {
+                    perPerson + diff
+                } else {
+                    perPerson
+                }
+
+                userToAmount[owner] = (userToAmount[owner] ?: 0.0) + finalAmount.toDouble()
+            }
         }
+
+        return userToAmount
+    }
 
     constructor(owner: UserResponse, props: OrderProps) : this(
         id = UUID.randomUUID(),
@@ -50,12 +66,14 @@ data class OrderProps(
 data class PizzaOrderRequest(
     val slices: MutableList<PizzaSliceRequest> = mutableListOf(),
     val size: PizzaSize,
+    val owners: MutableList<UserResponse> = mutableListOf(),
 )
 
 @Serializable
 data class PizzaOrderProps(
     val slices: MutableList<PizzaSliceProps> = mutableListOf(),
     val size: PizzaSize,
+    val owners: MutableList<UserResponse> = mutableListOf(),
 ) : Validatable {
     val price: Double
         get() {
@@ -78,11 +96,13 @@ data class PizzaOrderProps(
 
     override fun validate() {
         require(slices.size == size.slices) { "Ошибка соответствия размера!" }
+        require(owners.isNotEmpty()) { "Пустой список покупателей!" }
     }
 
     constructor(owner: UserResponse, props: PizzaOrderRequest) : this(
         slices = props.slices.map { PizzaSliceProps(owner, it) }.toMutableList(),
         size = props.size,
+        owners = props.owners.ifEmpty { mutableListOf(owner) },
     )
 }
 
@@ -124,6 +144,7 @@ data class OrderSerializable(
     val description: String = "",
     @Serializable(with = InstantSerializer::class) val date: Instant,
     val price: Double,
+    val perUserPrice: Map<@Serializable(with = UUIDSerializer::class) UUID, Double>,
 ) {
     constructor(original: Order) : this(
         id = original.id,
@@ -133,5 +154,6 @@ data class OrderSerializable(
         description = original.description,
         date = original.date,
         price = original.price,
+        perUserPrice = original.calculatePerUserPrice().mapKeys { it.key.id },
     )
 }

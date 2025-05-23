@@ -12,8 +12,8 @@ data class PizzaBase(
     @Serializable(with = UUIDSerializer::class) val id: UUID = UUID.randomUUID(),
     @Serializable(with = UUIDSerializer::class) val owner: UUID,
     internal var name: String,
-    internal var price: Double,
-) {
+    override var price: Double,
+) : Priced {
     constructor(owner: UUID, props: PizzaBaseProps) : this(
         id = UUID.randomUUID(),
         owner = owner,

@@ -11,10 +11,10 @@ data class PizzaSide(
     @Serializable(with = UUIDSerializer::class) val id: UUID = UUID.randomUUID(),
     @Serializable(with = UUIDSerializer::class) val owner: UUID,
     internal var name: String,
-    internal var ingredients: MutableList<Ingredient> = mutableListOf(),
+    override var ingredients: MutableList<Ingredient> = mutableListOf(),
     internal var notAllowedList: MutableList<PizzaSerializable> = mutableListOf(),
-) {
-    val price: Double
+) : PricedConst, Ingrediented {
+    override val price: Double
         get() {
             return (ingredients.sumOf { it.price / 2.5 } * 100).roundToInt() / 100.0
         }

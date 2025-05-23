@@ -11,8 +11,8 @@ data class Ingredient(
     @Serializable(with = UUIDSerializer::class) val id: UUID = UUID.randomUUID(),
     @Serializable(with = UUIDSerializer::class) val owner: UUID,
     internal var name: String,
-    internal var price: Double,
-) {
+    override var price: Double,
+) : Priced {
 
     constructor(owner: UUID, props: IngredientProps) : this(
         id = UUID.randomUUID(),

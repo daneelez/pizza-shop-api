@@ -3,6 +3,7 @@ package com.example.manager
 import com.example.model.PizzaSide
 import com.example.model.PizzaSideFilterProps
 import com.example.model.PizzaSideProps
+import com.example.utils.priceAndIngredientFilter
 
 import java.util.UUID
 
@@ -37,16 +38,13 @@ class PizzaSideManager() : BaseManager<PizzaSide, PizzaSideProps, PizzaSideFilte
         val list = userSides[userId]?.toList() ?: emptyList()
 
         return if (filterData != null) {
-            list.filter {
-                it.price >= filterData.minPrice && it.price <= filterData.maxPrice
-                        && it.ingredients.containsAll(filterData.ingredients)
-            }
+            list.priceAndIngredientFilter(
+                filterData.minPrice,
+                filterData.maxPrice,
+                filterData.ingredients
+            )
         } else {
             list
         }
-    }
-
-    fun findById(userId: UUID, id: UUID): PizzaSide? {
-        return userSides[userId]?.find { it.id == id }
     }
 }

@@ -4,6 +4,7 @@ import com.example.model.PizzaBase
 import com.example.model.PizzaBaseProps
 import com.example.model.PriceFilterProps
 import com.example.utils.isClassicBase
+import com.example.utils.priceFilter
 
 import java.util.UUID
 import kotlin.math.roundToInt
@@ -80,9 +81,7 @@ class PizzaBaseManager() : BaseManager<PizzaBase, PizzaBaseProps, PriceFilterPro
         val list = userBases[userId]?.toList() ?: emptyList()
 
         return if (filterData != null) {
-            list.filter {
-                it.price >= filterData.minPrice && it.price <= filterData.maxPrice
-            }
+            list.priceFilter(filterData.minPrice, filterData.maxPrice)
         } else {
             list
         }
